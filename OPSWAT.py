@@ -71,20 +71,11 @@ if response.status_code == 404:
 	url = "https://api.metadefender.com/v4/file"
 	headers = {
 		"apikey": sys.argv[2],
-		"Content-Type": "multipart/form-data",
 		"filename": sys.argv[1],
-		"samplesharing": "1",
-		"privateprocessing": "0",
-		"downloadfrom": "https://code.visualstudio.com/docs/?dv=win",
-		"rule": "sanitize",
-		"sandbox": "windows10",
-		"sandbox_timeout": "long",
-		"sandbox_browser": "chrome",
-		"callbackurl": "https://webhook.site/",
-		"rescan_count": "720",
-		"rescan_interval": "1"}
-		
-	response = requests.request("POST", url, headers=headers, data = content)
+			  }
+	  
+	files = {"file": open(file, 'rb')}
+	response = requests.request("POST", url, headers=headers, files=files)
 	
 	print(response.text)	
 	responseData = response.json()
