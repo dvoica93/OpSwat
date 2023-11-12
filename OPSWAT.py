@@ -84,8 +84,7 @@ if response.status_code == 404:
 		"rescan_count": "720",
 		"rescan_interval": "1"}
 		
-	with open(file,"rb") as f:
-		response = requests.request("POST", url, headers=headers, files = f)
+	response = requests.request("POST", url, headers=headers, data = content)
 	
 	print(response.text)	
 	responseData = response.json()
