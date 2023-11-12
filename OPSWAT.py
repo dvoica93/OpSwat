@@ -17,6 +17,10 @@ if not os.path.exists(file):
 	print("No input file provided");
 	exit(1)
 
+if not sys.argv[2]:
+	print("No key provided");
+	exit(1)
+
 with open(file,"rb") as f:
         content = f.read()
         hash = hashlib.sha256(content).hexdigest()
@@ -44,7 +48,7 @@ def thread_function(data_id):
 	while True:
 		url = "https://api.metadefender.com/v4/file/" + data_id
 		headers = {
-			"apikey": "9cb8d3cf896b94e5315345734f239338",
+			"apikey": sys.argv[2],
 			"x-file-metadata": "1"
 				}
 		response = requests.request("GET", url, headers=headers)
@@ -57,7 +61,7 @@ def thread_function(data_id):
 			time.sleep(10)
 
 url = "https://api.metadefender.com/v4/hash/" + hash
-headers = {"apikey": "9cb8d3cf896b94e5315345734f239338"}
+headers = {"apikey": sys.argv[2]}
 
 response = requests.request("GET", url, headers=headers)
 
@@ -66,7 +70,7 @@ print(response.text)
 if response.status_code == 404:
 	url = "https://api.metadefender.com/v4/file"
 	headers = {
-		"apikey": "9cb8d3cf896b94e5315345734f239338",
+		"apikey": sys.argv[2],
 		"Content-Type": "multipart/form-data",
 		"filename": sys.argv[1],
 		"samplesharing": "1",
