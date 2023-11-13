@@ -6,7 +6,6 @@ import threading
 import time
 import json
 
-
 sha256 = hashlib.sha256()
 if sys.argv[1]:
 	file = os.path.abspath(sys.argv[1])
@@ -28,12 +27,11 @@ with open(file,"rb") as f:
 print(hash)
 
 def printResults(response):
-	print(response.text)
-	print("printResults " + json.dumps(response.json(), indent = 4))
 	data = response.json();
 	details = data["scan_results"]["scan_details"]
+	print("")
 	if details:
-		print("Filename " + sys.argv[1]) 
+		print( "Filename " + sys.argv[1]) 
 		print("OverallStatus " + data["scan_results"]["scan_all_result_a"]) 
 		for engine in details.keys():
 			print("Engine " + engine) 
@@ -53,11 +51,12 @@ def thread_function(data_id):
 				}
 		response = requests.request("GET", url, headers=headers)
 		responseData = response.json()
-		print("Threading " + json.dumps(response.json(), indent = 4))
 		if(responseData['scan_results']['progress_percentage'] == 100):
+			print("Scanning finished");
 			printResults(response)
 			break;
 		else:
+			print("Polling for results. Please wait");
 			time.sleep(10)
 
 url = "https://api.metadefender.com/v4/hash/" + hash
@@ -65,9 +64,10 @@ headers = {"apikey": sys.argv[2]}
 
 response = requests.request("GET", url, headers=headers)
 
-print(response.text)
 
 if response.status_code == 404:
+	
+	print(response.text)
 	url = "https://api.metadefender.com/v4/file"
 	headers = {
 		"apikey": sys.argv[2],
@@ -76,8 +76,7 @@ if response.status_code == 404:
 	  
 	files = {"file": open(file, 'rb')}
 	response = requests.request("POST", url, headers=headers, files=files)
-	
-	print(response.text)	
+		
 	responseData = response.json()
 	data_id = responseData["data_id"]
 	
@@ -86,5 +85,6 @@ if response.status_code == 404:
 	t.join();
 
 else:
+	print("File found with Sha " + hash) 
 	printResults(response)
 	
